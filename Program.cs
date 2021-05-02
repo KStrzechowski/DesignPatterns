@@ -17,6 +17,7 @@ namespace Task3
                     Console.WriteLine(virus.ToString());
                     virus = it.Next();
                 }
+                Console.WriteLine();
             }
         }
 
@@ -79,36 +80,44 @@ namespace Task3
             var FactoryIterator = new FactoryVirusDatabaseIterator();
             IVirusDatabaseIterator it;
 
-            //ETAP 1
+            Console.WriteLine("ETAP 1\n");
+
+            Console.WriteLine("Simple database");
             it = FactoryIterator.GetIterator(simpleDatabase, genomeCollection);
             mediaOutlet.Publish(it);
+
             // TO DO EXCEL
+            Console.WriteLine("Excell database");
             it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
             mediaOutlet.Publish(it);
+
+            Console.WriteLine("Overcomplicated database");
             it = FactoryIterator.GetIterator(overcomplicatedDatabase, genomeCollection);
             mediaOutlet.Publish(it);
 
-            Console.WriteLine("//////");
+            Console.WriteLine("ETAP 2\n");
 
-            // ETAP 2
-        /*    it = FactoryIterator.GetIterator(simpleDatabase, genomeCollection);
-            mediaOutlet.Publish(new VisitorTransform(
-                it, new ModifiyTransform(15)
-                ));*/
+            Console.WriteLine("Filter:");
+            it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
+            mediaOutlet.Publish(new FilterIterator(it, new FilterDeathRateGreater(15)));
 
-            it = FactoryIterator.GetIterator(overcomplicatedDatabase, genomeCollection);
-            mediaOutlet.Publish(new FilterCompareIterator(
-                new VisitorTransform(
-                    it, 
-                    new ModifiyTransform(15)
-                ), (x => x.DeathRate > 21.1))
-                );
+            Console.WriteLine("Mapping:");
+            it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
+            mediaOutlet.Publish(new FilterIterator(
+                new ModifierIterator(
+                    it, new ModifierDeathRate(10)), 
+                new FilterDeathRateGreater(15)));
 
-            Console.WriteLine("////");
+            Console.WriteLine("Concatenate:");
+            it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
+            var it2 = FactoryIterator.GetIterator(overcomplicatedDatabase, genomeCollection);
+            mediaOutlet.Publish(new ConcatenateIterator(it, it2));
+
+            Console.WriteLine("ETAP 3\n");
 
             // testing animals
-       //     var tester = new Tester();
-       //     tester.Test();
+            var tester = new Tester();
+            tester.Test();
         }
     }
 }

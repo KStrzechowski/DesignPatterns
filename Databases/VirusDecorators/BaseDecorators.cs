@@ -32,7 +32,7 @@ namespace Task3
         public virtual VirusData? Next() => inner.Next();
     }
 
-    public abstract class IteratorTransformingDecorator : BaseVirusIteratorDecorator
+  /*  public abstract class IteratorTransformingDecorator : BaseVirusIteratorDecorator
     {
         public IteratorTransformingDecorator(IVirusDatabaseIterator inner): base(inner)
         {
@@ -46,5 +46,5 @@ namespace Task3
         }
 
         protected abstract VirusData Transform(VirusData virus);
-    }
+    }*/
 }
