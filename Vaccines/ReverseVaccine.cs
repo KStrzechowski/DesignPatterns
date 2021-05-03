@@ -35,16 +35,13 @@ namespace Task3.Vaccines
 
         public void Inject(Pig subject)
         {
+            char[] nucleotides = Immunity.ToCharArray();
+            Array.Reverse(nucleotides);
+            subject.Immunity = Immunity + nucleotides.ToString();
             if (randomElement.NextDouble() < DeathRate * modifier)
             {
                 subject.Alive = false;
                 Console.WriteLine($"Pig {subject.ID} is dead by vaccination");
-            }
-            else
-            {
-                char[] nucleotides = Immunity.ToCharArray();
-                Array.Reverse(nucleotides);
-                subject.Immunity = Immunity + nucleotides.ToString();
             }
             modifier++;
         }

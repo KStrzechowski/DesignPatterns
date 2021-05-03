@@ -25,14 +25,11 @@ namespace Task3.Vaccines
 
         public void Inject(Cat subject)
         {
+            subject.Immunity = Immunity[3..];
             if (randomElement.NextDouble() < DeathRate)
             {
                 subject.Alive = false;
                 Console.WriteLine($"Cat {subject.ID} is dead by vaccination");
-            }
-            else
-            {
-                subject.Immunity = Immunity[3..];
             }
         }
 

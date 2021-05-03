@@ -12,9 +12,6 @@ namespace Task3
             this.genomeDatas = database.genomeDatas;
         }
 
-        public List<GenomeData> GetGenomeDatas()
-        {
-            return genomeDatas;
-        }
+        public List<GenomeData> GetGenomeDatas() => genomeDatas;
     }
 }

@@ -27,4 +27,16 @@ namespace Task3
             return virus.DeathRate < value;
         }
     }
+
+    internal class FilterDeathRateEquals : BaseFilter
+    {
+        public FilterDeathRateEquals(double value) : base(value)
+        {
+        }
+
+        public override bool Filter(VirusData virus)
+        {
+            return virus.DeathRate == value;
+        }
+    }
 }

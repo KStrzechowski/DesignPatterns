@@ -5,37 +5,49 @@ using System.Text;
 
 namespace Task3
 {
-    /// <summary>
-    ///  UZUPEŁNIĆ CZYTANIE Z EXCELA
-    /// </summary>
     internal class ExcellDatabaseIterator : BaseVirusDatabaseIterator
     {
-       // private int i = 0;
-        private readonly IGenomeCollection genomeCollection;
-        public ExcellDatabaseIterator(ExcellDatabase database, IGenomeCollection genomeCollection)
+        private int i = 0;
+        private readonly List<SimpleDatabaseRow> virusDatas = new List<SimpleDatabaseRow>();
+        public ExcellDatabaseIterator(ExcellDatabase database, IGenomeCollection genomeCollection) : base(genomeCollection)
         {
-            this.genomeCollection = genomeCollection;
+            string[] Names = database.Names.Split(';');
+            string[] DeathRates = database.DeathRates.Split(';');
+            string[] InfectionRates = database.InfectionRates.Split(';');
+            string[] GenomeIds = database.GenomeIds.Split(';');
+
+            for(int i = 0; i < Names.Length; i++)
+            {
+                var Row = new SimpleDatabaseRow();
+                Row.VirusName = Names[i];
+                Row.GenomeId = Guid.Parse(GenomeIds[i]);
+
+                var number = DeathRates[i].Split('.');
+                if (number.Length == 1) Row.DeathRate = Convert.ToDouble(number[0]);
+                else Row.DeathRate = Convert.ToDouble(number[0]) + Convert.ToDouble(number[1]) / Math.Pow(10, number[1].Length);
+
+                number = InfectionRates[i].Split('.');
+                if (number.Length == 1) Row.InfectionRate = Convert.ToDouble(number[0]);
+                else Row.InfectionRate = Convert.ToDouble(number[0]) + Convert.ToDouble(number[1]) / Math.Pow(10, number[1].Length);
+                virusDatas.Add(Row);
+            }
         }
 
-        // TO DO
         public override VirusData? Next()
         {
-            return null;
-        }
-
-        public override List<GenomeData>? FindMatchingGenomes()
-        {
-            var genomeList = genomeCollection.GetGenomeDatas();
-            var matchingGenomes = new List<GenomeData>();
-
-            foreach (var genome in genomeList)
+            if (i < virusDatas.Count)
             {
-                if (genome.Id == null /*  Wstawić prawidłowy genomeId */)
-                {
-                    matchingGenomes.Add(genome);
-                }
+                var genomList = FindMatchingGenomes();
+                var virus = new VirusData(virusDatas[i].VirusName, virusDatas[i].DeathRate, virusDatas[i].InfectionRate, genomList);
+                i++;
+                return virus;
             }
-            return matchingGenomes;
+            else
+            {
+                return null;
+            }
         }
+
+        public override bool CheckCurrentGenome(GenomeData genome) => genome.Id == virusDatas[i].GenomeId;
     }
 }

@@ -7,13 +7,10 @@ namespace Task3
 {
     internal class OvercomplicatedDatabaseIterator : BaseVirusDatabaseIterator
     {
-        private readonly Queue<INode> nodeQueue = new Queue<INode>();
-        private readonly IGenomeCollection genomeCollection;
-        public OvercomplicatedDatabaseIterator(OvercomplicatedDatabase database, IGenomeCollection genomeCollection)
+        private readonly Stack<INode> nodeQueue = new Stack<INode>();
+        public OvercomplicatedDatabaseIterator(OvercomplicatedDatabase database, IGenomeCollection genomeCollection) : base(genomeCollection)
         {
-            this.genomeCollection = genomeCollection;
-            nodeQueue.Enqueue(database.Root);
-
+            nodeQueue.Push(database.Root);
         }
 
         public override VirusData? Next()
@@ -21,11 +18,11 @@ namespace Task3
             if (nodeQueue.Count != 0)
             {
                 var genomList = FindMatchingGenomes();
-                var currentNode = nodeQueue.Dequeue();
+                var currentNode = nodeQueue.Pop();
                 var childNodes = currentNode.Children;
                 foreach (var Node in childNodes)
                 {
-                    nodeQueue.Enqueue(Node);
+                    nodeQueue.Push(Node);
                 }
                 var virus = new VirusData(currentNode.VirusName, currentNode.DeathRate, currentNode.InfectionRate, genomList);
                 return virus;
@@ -36,24 +33,17 @@ namespace Task3
             }
         }
 
-        public override List<GenomeData>? FindMatchingGenomes()
+        public override bool CheckCurrentGenome(GenomeData genome)
         {
-            var genomeList = genomeCollection.GetGenomeDatas();
             var currentNodeTag = nodeQueue.Peek().GenomeTag;
-            var matchingGenomes = new List<GenomeData>();
-
-            foreach (var genome in genomeList)
+            foreach (var tag in genome.Tags)
             {
-                foreach (var tag in genome.Tags)
+                if (currentNodeTag == tag)
                 {
-                    if (currentNodeTag == tag)
-                    {
-                        matchingGenomes.Add(genome);
-                        break;
-                    }
+                    return true;
                 }
             }
-            return matchingGenomes;
+            return false;
         }
     }
 }

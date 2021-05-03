@@ -39,19 +39,17 @@ namespace Task3
                         subjects.Add(new Pig($"{i}"));
                     }
 
+                    // process of vaccination
                     foreach (var subject in subjects)
                     {
-                        // process of vaccination
                         subject.GetVaccine(vaccine);
                     }
 
+                    // testing immunity
                     var genomeDatabase = Generators.PrepareGenomes();
                     var simpleDatabase = Generators.PrepareSimpleDatabase(genomeDatabase);
-                    // iteration over SimpleGenomeDatabase using solution from 1)
-                    // subjects should be tested here using GetTested function
-                    var factoryIterator = new FactoryVirusDatabaseIterator();
-                    var factoryCollection = new FactoryGenomeCollection();
-                    var it = factoryIterator.GetIterator(simpleDatabase, factoryCollection.GetGenomeCollection(genomeDatabase));
+                    var Factory = new FactoryDatabase();
+                    var it = Factory.GetIterator(simpleDatabase, Factory.GetGenomeCollection(genomeDatabase));
 
                     var virus = it.Next();
                     while (virus != null)
@@ -80,45 +78,40 @@ namespace Task3
             var overcomplicatedDatabase = Generators.PrepareOvercomplicatedDatabase(genomeDatabase);
             var mediaOutlet = new MediaOutlet();
 
-            var FactoryCollection = new FactoryGenomeCollection();
-            var genomeCollection = FactoryCollection.GetGenomeCollection(genomeDatabase);
-            var FactoryIterator = new FactoryVirusDatabaseIterator();
-            IVirusDatabaseIterator it;
+            var Factory = new FactoryDatabase();
+            var genomeCollection = Factory.GetGenomeCollection(genomeDatabase);
 
             Console.WriteLine("ETAP 1\n");
 
             Console.WriteLine("Simple database");
-            it = FactoryIterator.GetIterator(simpleDatabase, genomeCollection);
+            var it = Factory.GetIterator(simpleDatabase, genomeCollection);
             mediaOutlet.Publish(it);
 
-            // TO DO EXCEL
             Console.WriteLine("Excell database");
-            it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
+            it = Factory.GetIterator(excellDatabase, genomeCollection);
             mediaOutlet.Publish(it);
 
             Console.WriteLine("Overcomplicated database");
-            it = FactoryIterator.GetIterator(overcomplicatedDatabase, genomeCollection);
+            it = Factory.GetIterator(overcomplicatedDatabase, genomeCollection);
             mediaOutlet.Publish(it);
 
             Console.WriteLine("ETAP 2\n");
 
             Console.WriteLine("Filter:");
-            it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
+            it = Factory.GetIterator(excellDatabase, genomeCollection);
             mediaOutlet.Publish(new FilterIterator(it, new FilterDeathRateGreater(15)));
 
             Console.WriteLine("Mapping:");
-            it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
+            it = Factory.GetIterator(excellDatabase, genomeCollection);
             mediaOutlet.Publish(new FilterIterator(
                 new ModifierIterator(
                     it, new ModifierDeathRate(10)), 
                 new FilterDeathRateGreater(15)));
 
             Console.WriteLine("Concatenate:");
-            it = FactoryIterator.GetIterator(excellDatabase, genomeCollection);
-            var it2 = FactoryIterator.GetIterator(overcomplicatedDatabase, genomeCollection);
+            it = Factory.GetIterator(excellDatabase, genomeCollection);
+            var it2 = Factory.GetIterator(overcomplicatedDatabase, genomeCollection);
             mediaOutlet.Publish(new ConcatenateIterator(it, it2));
-
-            Console.WriteLine("ETAP 3\n");
 
             // testing animals
             var tester = new Tester();

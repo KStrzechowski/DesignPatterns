@@ -31,20 +31,4 @@ namespace Task3
 
         public virtual VirusData? Next() => inner.Next();
     }
-
-  /*  public abstract class IteratorTransformingDecorator : BaseVirusIteratorDecorator
-    {
-        public IteratorTransformingDecorator(IVirusDatabaseIterator inner): base(inner)
-        {
-        }
-
-        public override VirusData? Next()
-        {
-            var virus = base.Next();
-            if (virus == null) return null;
-            else return Transform(virus);
-        }
-
-        protected abstract VirusData Transform(VirusData virus);
-    }*/
 }
