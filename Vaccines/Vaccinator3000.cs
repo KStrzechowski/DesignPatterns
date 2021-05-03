@@ -15,5 +15,58 @@ namespace Task3.Vaccines
         {
             return "Vaccinator3000";
         }
+
+        public void Inject(Dog subject)
+        {
+            if (randomElement.NextDouble() < DeathRate)
+            {
+                subject.Alive = false;
+                Console.WriteLine($"Dog {subject.ID} is dead by vaccination");
+            }
+            else
+            {
+                subject.Immunity = GetImmunity(3000);
+            }
+        }
+
+        public void Inject(Cat subject)
+        {
+            if (randomElement.NextDouble() < DeathRate)
+            {
+                subject.Alive = false;
+                Console.WriteLine($"Cat {subject.ID} is dead by vaccination");
+            }
+            else
+            {
+                subject.Immunity = GetImmunity(300);
+            }
+        }
+
+        public void Inject(Pig subject)
+        {
+            if (randomElement.NextDouble() < 3 * DeathRate)
+            {
+                subject.Alive = false;
+                Console.WriteLine($"Pig {subject.ID} is dead by vaccination");
+            }
+            else
+            {
+                subject.Immunity = GetImmunity(15);
+            }
+        }
+
+        private string GetImmunity(int n)
+        {
+            int index;
+            var size = Immunity.Length;
+            var random = new Random();
+            var sb = new StringBuilder(n);
+            for (int i = 0; i < n; i++)
+            {
+                index = randomElement.Next(size);
+                sb.Append(Immunity[index]);
+            }
+            return sb.ToString();
+        }
     }
 }

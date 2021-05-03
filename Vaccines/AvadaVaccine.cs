@@ -17,5 +17,29 @@ namespace Task3.Vaccines
         {
             return "AvadaVaccine";
         }
+
+        public void Inject(Dog subject)
+        {
+            subject.Immunity = Immunity;
+        }
+
+        public void Inject(Cat subject)
+        {
+            if (randomElement.NextDouble() < DeathRate)
+            {
+                subject.Alive = false;
+                Console.WriteLine($"Cat {subject.ID} is dead by vaccination");
+            }
+            else
+            {
+                subject.Immunity = Immunity[3..];
+            }
+        }
+
+        public void Inject(Pig subject)
+        {
+            subject.Alive = false;
+            Console.WriteLine($"Pig {subject.ID} is dead by vaccination");
+        }
     }
 }

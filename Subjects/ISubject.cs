@@ -12,5 +12,6 @@ namespace Task3.Subjects
         public string Immunity { get; set; }
 
         void GetTested(VirusData virus);
+        void GetVaccine(IVaccine vaccine);
     }
 }

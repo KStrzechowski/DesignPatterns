@@ -9,5 +9,9 @@ namespace Task3.Vaccines
     {
         public string Immunity { get; }
         public double DeathRate { get; }
+
+        void Inject(Dog subject);
+        void Inject(Cat subject);
+        void Inject(Pig subject);
     }
 }

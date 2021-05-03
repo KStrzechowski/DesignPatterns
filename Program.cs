@@ -42,21 +42,26 @@ namespace Task3
                     foreach (var subject in subjects)
                     {
                         // process of vaccination
+                        subject.GetVaccine(vaccine);
                     }
 
                     var genomeDatabase = Generators.PrepareGenomes();
                     var simpleDatabase = Generators.PrepareSimpleDatabase(genomeDatabase);
                     // iteration over SimpleGenomeDatabase using solution from 1)
                     // subjects should be tested here using GetTested function
+                    var factoryIterator = new FactoryVirusDatabaseIterator();
+                    var factoryCollection = new FactoryGenomeCollection();
+                    var it = factoryIterator.GetIterator(simpleDatabase, factoryCollection.GetGenomeCollection(genomeDatabase));
 
-
-                    // iterating over simpleDatabase
-                    //{
-                        //foreach (var subject in subjects)
-                        //{
-                        //    subject.GetTested();
-                        //}
-                    //}
+                    var virus = it.Next();
+                    while (virus != null)
+                    {
+                        foreach (var subject in subjects)
+                        {
+                            subject.GetTested(virus);
+                        }
+                        virus = it.Next();
+                    }
 
                     int aliveCount = 0;
                     foreach (var subject in subjects)
