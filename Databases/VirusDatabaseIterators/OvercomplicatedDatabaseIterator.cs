@@ -5,26 +5,28 @@ using System.Text;
 
 namespace Task3
 {
-    internal class OvercomplicatedDatabaseIterator : BaseVirusDatabaseIterator
+    internal class OvercomplicatedDatabaseIterator : IVirusDatabaseIterator
     {
-        private readonly Stack<INode> nodeQueue = new Stack<INode>();
-        public OvercomplicatedDatabaseIterator(OvercomplicatedDatabase database, IGenomeCollection genomeCollection) : base(genomeCollection)
+        private string currentGenomeTag;
+        private readonly Stack<INode> nodeStack = new Stack<INode>();
+        public OvercomplicatedDatabaseIterator(OvercomplicatedDatabase database)
         {
-            nodeQueue.Push(database.Root);
+            nodeStack.Push(database.Root);
+            currentGenomeTag = database.Root.GenomeTag;
         }
 
-        public override VirusData? Next()
+        public VirusData? Next()
         {
-            if (nodeQueue.Count != 0)
+            if (nodeStack.Count != 0)
             {
-                var genomList = FindMatchingGenomes();
-                var currentNode = nodeQueue.Pop();
+                var currentNode = nodeStack.Pop();
                 var childNodes = currentNode.Children;
                 foreach (var Node in childNodes)
                 {
-                    nodeQueue.Push(Node);
+                    nodeStack.Push(Node);
                 }
-                var virus = new VirusData(currentNode.VirusName, currentNode.DeathRate, currentNode.InfectionRate, genomList);
+                var virus = new VirusData(currentNode.VirusName, currentNode.DeathRate, currentNode.InfectionRate, null);
+                currentGenomeTag = currentNode.GenomeTag;
                 return virus;
             }
             else
@@ -33,17 +35,6 @@ namespace Task3
             }
         }
 
-        public override bool CheckCurrentGenome(GenomeData genome)
-        {
-            var currentNodeTag = nodeQueue.Peek().GenomeTag;
-            foreach (var tag in genome.Tags)
-            {
-                if (currentNodeTag == tag)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        public List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection) => collection.GetGenomeDatas(currentGenomeTag);
     }
 }

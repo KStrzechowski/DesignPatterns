@@ -4,37 +4,43 @@ using System.Text;
 
 namespace Task3
 {
-    internal class FilterDeathRateGreater : BaseFilter
+    internal class FilterDeathRateGreater : IFilter
     {
-        public FilterDeathRateGreater(double value) : base(value)
+        protected readonly double value;
+        public FilterDeathRateGreater(double value)
         {
+            this.value = value;
         }
 
-        public override bool Filter(VirusData virus)
+        public bool Filter(VirusData virus)
         {
             return virus.DeathRate > value;
         }
     }
 
-    internal class FilterDeathRateLess : BaseFilter
+    internal class FilterDeathRateLess : IFilter
     {
-        public FilterDeathRateLess(double value) : base(value)
+        protected readonly double value;
+        public FilterDeathRateLess(double value)
         {
+            this.value = value;
         }
 
-        public override bool Filter(VirusData virus)
+        public bool Filter(VirusData virus)
         {
             return virus.DeathRate < value;
         }
     }
 
-    internal class FilterDeathRateEquals : BaseFilter
+    internal class FilterDeathRateEquals : IFilter
     {
-        public FilterDeathRateEquals(double value) : base(value)
+        protected readonly double value;
+        public FilterDeathRateEquals(double value)
         {
+            this.value = value;
         }
 
-        public override bool Filter(VirusData virus)
+        public bool Filter(VirusData virus)
         {
             return virus.DeathRate == value;
         }

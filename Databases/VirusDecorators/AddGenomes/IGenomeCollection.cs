@@ -6,6 +6,7 @@ namespace Task3
 {
     public interface IGenomeCollection
     {
-        List<GenomeData> GetGenomeDatas();
+        List<GenomeData> GetGenomeDatas(Guid genomeId);
+        List<GenomeData> GetGenomeDatas(string genomeTag);
     }
 }

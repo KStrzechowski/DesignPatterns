@@ -8,5 +8,6 @@ namespace Task3
     public interface IVirusDatabaseIterator
     {
         VirusData? Next();
+        List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection);
     }
 }

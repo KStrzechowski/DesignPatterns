@@ -4,13 +4,15 @@ using System.Text;
 
 namespace Task3
 {
-    internal class ModifierDeathRate : BaseModifier
+    internal class ModifierDeathRate : IModifier
     {
-        public ModifierDeathRate(double value) : base(value)
+        private readonly double value;
+        public ModifierDeathRate(double value)
         {
+            this.value = value;
         }
 
-        public override VirusData Modify(VirusData virus)
+        public VirusData Modify(VirusData virus)
         {
             return new VirusData(virus.VirusName, virus.DeathRate + value, virus.InfectionRate, virus.Genomes);
         }

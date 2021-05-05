@@ -5,21 +5,23 @@ using System.Text;
 
 namespace Task3
 {
-    internal class SimpleDatabaseIterator : BaseVirusDatabaseIterator
+    internal class SimpleDatabaseIterator : IVirusDatabaseIterator
     {
         private int i = 0;
+        private Guid currentGenomeId;
         private readonly IReadOnlyList<SimpleDatabaseRow> virusDatas;
-        public SimpleDatabaseIterator(SimpleDatabase database, IGenomeCollection genomeCollection) : base(genomeCollection)
+
+        public SimpleDatabaseIterator(SimpleDatabase database)
         {
             virusDatas = database.Rows;
         }
 
-        public override VirusData? Next()
+        public VirusData? Next()
         {
             if (i < virusDatas.Count)
             {
-                var genomList = FindMatchingGenomes();
-                var virus = new VirusData(virusDatas[i].VirusName, virusDatas[i].DeathRate, virusDatas[i].InfectionRate, genomList);
+                var virus = new VirusData(virusDatas[i].VirusName, virusDatas[i].DeathRate, virusDatas[i].InfectionRate, null);
+                currentGenomeId = virusDatas[i].GenomeId;
                 i++;
                 return virus;
             }
@@ -29,6 +31,6 @@ namespace Task3
             }
         }
 
-        public override bool CheckCurrentGenome(GenomeData genome) => genome.Id == virusDatas[i].GenomeId;
+        public List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection) => collection.GetGenomeDatas(currentGenomeId);
     }
 }

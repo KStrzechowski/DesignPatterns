@@ -5,41 +5,39 @@ using System.Text;
 
 namespace Task3
 {
-    internal class ExcellDatabaseIterator : BaseVirusDatabaseIterator
+    internal class ExcellDatabaseIterator : IVirusDatabaseIterator
     {
-        private int i = 0;
-        private readonly List<SimpleDatabaseRow> virusDatas = new List<SimpleDatabaseRow>();
-        public ExcellDatabaseIterator(ExcellDatabase database, IGenomeCollection genomeCollection) : base(genomeCollection)
+        private int nameIndex = 0;
+        private int deathRateIndex = 0;
+        private int infectionRateIndex = 0;
+        private int genomeIdIndex = 0;
+        private bool isEmpty = false;
+
+        private Guid currentGenomeId;
+        private readonly ExcellDatabase database;
+        public ExcellDatabaseIterator(ExcellDatabase database)
         {
-            string[] Names = database.Names.Split(';');
-            string[] DeathRates = database.DeathRates.Split(';');
-            string[] InfectionRates = database.InfectionRates.Split(';');
-            string[] GenomeIds = database.GenomeIds.Split(';');
-
-            for(int i = 0; i < Names.Length; i++)
-            {
-                var Row = new SimpleDatabaseRow();
-                Row.VirusName = Names[i];
-                Row.GenomeId = Guid.Parse(GenomeIds[i]);
-
-                var number = DeathRates[i].Split('.');
-                if (number.Length == 1) Row.DeathRate = Convert.ToDouble(number[0]);
-                else Row.DeathRate = Convert.ToDouble(number[0]) + Convert.ToDouble(number[1]) / Math.Pow(10, number[1].Length);
-
-                number = InfectionRates[i].Split('.');
-                if (number.Length == 1) Row.InfectionRate = Convert.ToDouble(number[0]);
-                else Row.InfectionRate = Convert.ToDouble(number[0]) + Convert.ToDouble(number[1]) / Math.Pow(10, number[1].Length);
-                virusDatas.Add(Row);
-            }
+            this.database = database;
         }
 
-        public override VirusData? Next()
+        public VirusData? Next()
         {
-            if (i < virusDatas.Count)
+            if (!isEmpty)
             {
-                var genomList = FindMatchingGenomes();
-                var virus = new VirusData(virusDatas[i].VirusName, virusDatas[i].DeathRate, virusDatas[i].InfectionRate, genomList);
-                i++;
+                string virusName, Info;
+                double deathRate, infectionRate;
+                (virusName, nameIndex) = RetrieveNextString(database.Names, nameIndex);
+
+                (Info, deathRateIndex) = RetrieveNextString(database.DeathRates, deathRateIndex);
+                deathRate = RetrieveNumber(Info);
+
+                (Info, infectionRateIndex) = RetrieveNextString(database.InfectionRates, infectionRateIndex);
+                infectionRate = RetrieveNumber(Info);
+
+                (Info, genomeIdIndex) = RetrieveNextString(database.GenomeIds, genomeIdIndex);
+                currentGenomeId = Guid.Parse(Info);
+
+                var virus = new VirusData(virusName, deathRate, infectionRate, null);
                 return virus;
             }
             else
@@ -48,6 +46,29 @@ namespace Task3
             }
         }
 
-        public override bool CheckCurrentGenome(GenomeData genome) => genome.Id == virusDatas[i].GenomeId;
+        private (string, int) RetrieveNextString(string data, int startingIndex)
+        {
+            string retrievedData;
+            int endIndex = data.IndexOf(';', startingIndex);
+            if (endIndex != -1) retrievedData = data.Substring(startingIndex, endIndex - startingIndex); 
+            else
+            {
+                retrievedData = data.Substring(startingIndex);
+                isEmpty = true;
+            }
+
+            return (retrievedData, endIndex + 1);
+        }
+
+        private double RetrieveNumber(string data)
+        {
+            double sum;
+            var number = data.Split('.');
+            if (number.Length == 1) sum = Convert.ToDouble(number[0]);
+            else sum = Convert.ToDouble(number[0]) + Convert.ToDouble(number[1]) / Math.Pow(10, number[1].Length);
+            return sum;
+        }
+
+        public List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection) => collection.GetGenomeDatas(currentGenomeId);
     }
 }
