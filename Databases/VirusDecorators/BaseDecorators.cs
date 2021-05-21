@@ -13,8 +13,6 @@ namespace Task3
             this.inner = inner;
         }
 
-        public virtual List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection) 
-            => inner.FindMatchingGenomes(collection);
         public virtual VirusData? Next() => inner.Next();
     }
 }

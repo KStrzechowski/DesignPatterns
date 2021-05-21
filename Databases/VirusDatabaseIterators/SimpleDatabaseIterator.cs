@@ -5,10 +5,9 @@ using System.Text;
 
 namespace Task3
 {
-    internal class SimpleDatabaseIterator : IVirusDatabaseIterator
+    internal class SimpleDatabaseIterator : IVirusInfoDatabaseIterator
     {
         private int i = 0;
-        private Guid currentGenomeId;
         private readonly IReadOnlyList<SimpleDatabaseRow> virusDatas;
 
         public SimpleDatabaseIterator(SimpleDatabase database)
@@ -16,21 +15,19 @@ namespace Task3
             virusDatas = database.Rows;
         }
 
-        public VirusData? Next()
+        public VirusInfo? Next()
         {
             if (i < virusDatas.Count)
             {
-                var virus = new VirusData(virusDatas[i].VirusName, virusDatas[i].DeathRate, virusDatas[i].InfectionRate, null);
-                currentGenomeId = virusDatas[i].GenomeId;
+                var virusInfo = new VirusInfo(virusDatas[i].VirusName, virusDatas[i].DeathRate, 
+                    virusDatas[i].InfectionRate, virusDatas[i].GenomeId);
                 i++;
-                return virus;
+                return virusInfo;
             }
             else
             {
                 return null;
             }
         }
-
-        public List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection) => collection.GetGenomeDatas(currentGenomeId);
     }
 }

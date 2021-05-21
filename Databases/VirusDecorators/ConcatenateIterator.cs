@@ -24,13 +24,5 @@ namespace Task3
             }
             return virus;
         }
-
-        public override List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection)
-        {
-            if (!isFirstIteratorEmpty)
-                return inner.FindMatchingGenomes(collection);
-            else
-                return it2.FindMatchingGenomes(collection);
-        }
     }
 }

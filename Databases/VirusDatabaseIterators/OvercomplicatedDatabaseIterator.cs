@@ -5,17 +5,15 @@ using System.Text;
 
 namespace Task3
 {
-    internal class OvercomplicatedDatabaseIterator : IVirusDatabaseIterator
+    internal class OvercomplicatedDatabaseIterator : IVirusInfoDatabaseIterator
     {
-        private string currentGenomeTag;
         private readonly Stack<INode> nodeStack = new Stack<INode>();
         public OvercomplicatedDatabaseIterator(OvercomplicatedDatabase database)
         {
             nodeStack.Push(database.Root);
-            currentGenomeTag = database.Root.GenomeTag;
         }
 
-        public VirusData? Next()
+        public VirusInfo? Next()
         {
             if (nodeStack.Count != 0)
             {
@@ -25,16 +23,14 @@ namespace Task3
                 {
                     nodeStack.Push(Node);
                 }
-                var virus = new VirusData(currentNode.VirusName, currentNode.DeathRate, currentNode.InfectionRate, null);
-                currentGenomeTag = currentNode.GenomeTag;
-                return virus;
+                var virusInfo = new VirusInfo(currentNode.VirusName, currentNode.DeathRate, 
+                    currentNode.InfectionRate, currentNode.GenomeTag);
+                return virusInfo;
             }
             else
             {
                 return null;
             }
         }
-
-        public List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection) => collection.GetGenomeDatas(currentGenomeTag);
     }
 }

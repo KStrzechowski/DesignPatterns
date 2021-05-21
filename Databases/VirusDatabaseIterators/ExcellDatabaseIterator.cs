@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Task3
 {
-    internal class ExcellDatabaseIterator : IVirusDatabaseIterator
+    internal class ExcellDatabaseIterator : IVirusInfoDatabaseIterator
     {
         private int nameIndex = 0;
         private int deathRateIndex = 0;
@@ -13,32 +13,31 @@ namespace Task3
         private int genomeIdIndex = 0;
         private bool isEmpty = false;
 
-        private Guid currentGenomeId;
         private readonly ExcellDatabase database;
         public ExcellDatabaseIterator(ExcellDatabase database)
         {
             this.database = database;
         }
 
-        public VirusData? Next()
+        public VirusInfo? Next()
         {
             if (!isEmpty)
             {
-                string virusName, Info;
-                double deathRate, infectionRate;
-                (virusName, nameIndex) = RetrieveNextString(database.Names, nameIndex);
+                string Info;
+                (Info, nameIndex) = RetrieveNextString(database.Names, nameIndex);
+                var virusName = Info;
 
                 (Info, deathRateIndex) = RetrieveNextString(database.DeathRates, deathRateIndex);
-                deathRate = RetrieveNumber(Info);
+                var deathRate = RetrieveNumber(Info);
 
                 (Info, infectionRateIndex) = RetrieveNextString(database.InfectionRates, infectionRateIndex);
-                infectionRate = RetrieveNumber(Info);
+                var infectionRate = RetrieveNumber(Info);
 
                 (Info, genomeIdIndex) = RetrieveNextString(database.GenomeIds, genomeIdIndex);
-                currentGenomeId = Guid.Parse(Info);
+                var genomeId = Guid.Parse(Info);
 
-                var virus = new VirusData(virusName, deathRate, infectionRate, null);
-                return virus;
+                var virusInfo = new VirusInfo(virusName, deathRate, infectionRate, genomeId);
+                return virusInfo;
             }
             else
             {
@@ -50,10 +49,10 @@ namespace Task3
         {
             string retrievedData;
             int endIndex = data.IndexOf(';', startingIndex);
-            if (endIndex != -1) retrievedData = data.Substring(startingIndex, endIndex - startingIndex); 
+            if (endIndex != -1) retrievedData = data[startingIndex..endIndex]; 
             else
             {
-                retrievedData = data.Substring(startingIndex);
+                retrievedData = data[startingIndex..];
                 isEmpty = true;
             }
 
@@ -68,7 +67,5 @@ namespace Task3
             else sum = Convert.ToDouble(number[0]) + Convert.ToDouble(number[1]) / Math.Pow(10, number[1].Length);
             return sum;
         }
-
-        public List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection) => collection.GetGenomeDatas(currentGenomeId);
     }
 }

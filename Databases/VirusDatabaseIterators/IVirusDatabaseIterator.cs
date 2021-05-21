@@ -5,9 +5,13 @@ using System.Text;
 
 namespace Task3
 {
+    public interface IVirusInfoDatabaseIterator
+    {
+        VirusInfo? Next();
+    }
+
     public interface IVirusDatabaseIterator
     {
         VirusData? Next();
-        List<GenomeData>? FindMatchingGenomes(IGenomeCollection collection);
     }
 }

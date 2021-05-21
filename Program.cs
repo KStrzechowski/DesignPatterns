@@ -7,15 +7,17 @@ namespace Task3
 {
     class Program
     {
-        public static IVirusDatabaseIterator GetIterator(SimpleDatabase database)
+        public static IVirusInfoDatabaseIterator GetDatabaseIterator(SimpleDatabase database)
             => new SimpleDatabaseIterator(database);
-        public static IVirusDatabaseIterator GetIterator(ExcellDatabase database)
+        public static IVirusInfoDatabaseIterator GetDatabaseIterator(ExcellDatabase database)
             => new ExcellDatabaseIterator(database);
-        public static IVirusDatabaseIterator GetIterator(OvercomplicatedDatabase database)
+        public static IVirusInfoDatabaseIterator GetDatabaseIterator(OvercomplicatedDatabase database)
             => new OvercomplicatedDatabaseIterator(database);
 
-        public static IVirusDatabaseIterator AddGenomes(IVirusDatabaseIterator it, SimpleGenomeDatabase genomeCollection)
-            => new AddGenomesIterator(it, new SimpleGenomeCollection(genomeCollection));
+        public static IVirusDatabaseIterator GetVirusIterator(IVirusInfoDatabaseIterator it, SimpleGenomeDatabase genomeCollection)
+            => new VirusWithGenomeIterator(it, new SimpleGenomeCollection(genomeCollection));
+        public static IVirusDatabaseIterator GetVirusIterator(IVirusInfoDatabaseIterator it)
+            => new VirusWithGenomeIterator(it);
 
         public class MediaOutlet
         {
@@ -58,7 +60,7 @@ namespace Task3
                     // testing immunity
                     var genomeDatabase = Generators.PrepareGenomes();
                     var simpleDatabase = Generators.PrepareSimpleDatabase(genomeDatabase);
-                    var it = AddGenomes(GetIterator(simpleDatabase), genomeDatabase);
+                    var it = GetVirusIterator(GetDatabaseIterator(simpleDatabase), genomeDatabase);
 
                     var virus = it.Next();
                     while (virus != null)
@@ -90,37 +92,37 @@ namespace Task3
             Console.WriteLine("ETAP 1\n");
 
             Console.WriteLine("Simple database without genomes");
-            var it = GetIterator(simpleDatabase);
+            var it = GetVirusIterator(GetDatabaseIterator(simpleDatabase));
             mediaOutlet.Publish(it);
 
             Console.WriteLine("Simple database with genomes");
-            it = AddGenomes(GetIterator(simpleDatabase), genomeDatabase);
+            it = GetVirusIterator(GetDatabaseIterator(simpleDatabase), genomeDatabase);
             mediaOutlet.Publish(it);
 
             Console.WriteLine("Excell database");
-            it = AddGenomes(GetIterator(excellDatabase), genomeDatabase);
+            it = GetVirusIterator(GetDatabaseIterator(excellDatabase), genomeDatabase);
             mediaOutlet.Publish(it);
 
             Console.WriteLine("Overcomplicated database");
-            it = AddGenomes(GetIterator(overcomplicatedDatabase), genomeDatabase);
+            it = GetVirusIterator(GetDatabaseIterator(overcomplicatedDatabase), genomeDatabase);
             mediaOutlet.Publish(it);
 
             Console.WriteLine("ETAP 2\n");
 
             Console.WriteLine("Filter:");
-            it = AddGenomes(GetIterator(excellDatabase), genomeDatabase);
+            it = GetVirusIterator(GetDatabaseIterator(excellDatabase), genomeDatabase);
             mediaOutlet.Publish(new FilterIterator(it, new FilterDeathRateGreater(15)));
 
             Console.WriteLine("Mapping:");
-            it = AddGenomes(GetIterator(excellDatabase), genomeDatabase);
+            it = GetVirusIterator(GetDatabaseIterator(excellDatabase), genomeDatabase);
             mediaOutlet.Publish(new FilterIterator(
                 new ModifierIterator(
                     it, new ModifierDeathRate(10)), 
                 new FilterDeathRateGreater(15)));
 
             Console.WriteLine("Concatenate:");
-            it = AddGenomes(GetIterator(excellDatabase), genomeDatabase);
-            var it2 = AddGenomes(GetIterator(overcomplicatedDatabase), genomeDatabase);
+            it = GetVirusIterator(GetDatabaseIterator(excellDatabase), genomeDatabase);
+            var it2 = GetVirusIterator(GetDatabaseIterator(overcomplicatedDatabase), genomeDatabase);
             mediaOutlet.Publish(new ConcatenateIterator(it, it2));
 
             // testing animals
